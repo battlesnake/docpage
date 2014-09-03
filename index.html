@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- -------------------------------------------- -->
+<!--                                              -->
+<!-- Docpage, documentation HTML template         -->
+<!--                                              -->
+<!-- Mark K Cowan, mark@battlesnake.co.uk         -->
+<!--                                              -->
+<!-- github.com/battlesnake                       -->
+<!--                                              -->
+<!-- hackology.co.uk                              -->
+<!--                                              -->
+<!-- -------------------------------------------- -->
+<!--                                              -->
+<!-- Search for !start! to find start of document -->
+<!--   vim: /!start!<CR>                          -->
+<!--   nano: ^W!start!<CR>                        -->
+<!--   frontpage express: del /s c:\*.*           -->
+<!--                                              -->
+<!-- Disclaimer: I take no responsibility for     -->
+<!-- the consequences of following my (malicious) -->
+<!-- advice for frontpage express.                -->
+<!--                                              -->
+<!-- -------------------------------------------- -->
+<title>Documentation template</title>
+<meta charset="utf8">
+<meta id="author" content="Mark K Cowan, mark@battlesnake.co.uk">
+<meta id="generator" content="Ed, the true WYGIWYG editor">
+<meta id="i'm growing a watermelon plant" constnt="isn't this awesome?">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<script>
+'use strict';
+	/* Generate table of contents from h1/h2/h3 tags */
+	var generate_toc = function () {
+		/* Table of contents */
+		var idx = 0, prev = 1, first = true, html = '';
+		$('article h1, article h2, article h3').each(function () {
+			var e = $(this);
+			var text = e.text();
+			var id = e.attr('id');
+			if (!id) {
+				id = 'toc-' + idx++;
+			}
+			e.attr('data-toc', 'yes');
+			var level = e.prop('tagName').substr(1);
+			e.attr('id', id);
+			if (level > prev) {
+				first = true;
+			}
+			if (!first) {
+				html += '</li>';
+			}
+			first = false;
+			for (; level < prev; prev--) {
+				html += '</ol>';
+				first = true;
+			}
+			if (level == prev + 1) {
+				html += '<ol>';
+				prev++;
+			} else if (level > prev) {
+				throw "Attempted to jump more than one header level";
+			}
+			html += '<li><a href="#' + id + '" id="li-' + id + '">' + text + '</a>';
+		});
+		if (!first) {
+			html += '</li>';
+		}
+		for (; prev > 1; prev--) {
+			html += '</ol>';
+		}
+		var toc = $('#toc');
+		toc.empty();
+		toc.append(html);
+	};
+	$(document).ready(function () {
+		/* Generate table of contents from h1/h2/h3 tags */
+		generate_toc();
+		/* Smooth scroll to sections */
+		var scrollToElem = function (target, glow) {
+			var $target = $(target), glow = glow ? $(glow) : $target;
+			/* Make target glow for a short while to make it easy to spot */
+			var oldcolor = glow.css('color');
+			var oldbgcolor = glow.css('backgroundColor');
+			glow.css('color', 'blue');
+			glow.css('backgroundColor', 'gold');
+			glow.animate({ 'color': oldcolor, 'backgroundColor': oldbgcolor }, 2000).delay(500);
+			/* Smooth scroll animation */
+			$('html, body').stop().animate(
+				{ scrollTop: $target.offset().top - 40 },
+				500, 'swing',
+				function () {
+					window.location.hash = target;
+				});
+		}
+		/* Smooth scrolling crossref/toc/title links */
+		$('a[href^="#"]').click(function (e) {
+			e.preventDefault();
+			scrollToElem(this.hash);
+		});
+		/* Smooth-scroll to TOC when clicking titles */
+		$('h1[id], h2[id], h3[id]').click(function () {
+			var e = $(this);
+			var id = e.attr('id'), target;
+			if (e.attr('data-toc')) {
+				target = '#li-' + id;
+			}
+			scrollToElem('#toc', target);
+		});
+	});
+</script>
+<style>
+	@import url(http://fonts.googleapis.com/css?family=Droid+Sans|Lato:300,400|Source+Code+Pro:400,600|EB+Garamond);
+	@media screen and (min-device-width: 1200px) {
+		html {
+			/*
+			 * Chrome on Windows 7 shows jagged edges on the main fonts used
+			 * in this stylesheet.  This battery-murdering hack fixes that and
+			 * looks pretty nice in Firefox and IE too.
+			 */
+			/* text-shadow: rgba(0,0,0,1) 0 0 0.01mm; */
+		}
+	}
+	* {
+		box-sizing: border-box;
+	}
+	html {
+		background: gray;
+	}
+	body {
+		font-family: "Droid Sans", "Roboto", "Helvetica Neue";
+		font-weight: 400;
+		background: white;
+		max-width: 210mm;
+		/**/ width: 210mm; /**/
+		min-height: 297mm;
+		margin: 0 auto;
+		padding: 10mm 20mm 15mm 20mm;
+		line-height: 1.5;
+		font-size: 5mm;
+	}
+	h1 {
+		font-size: 9mm;
+	}
+	h2 {
+		font-size: 6.5mm;
+	}
+	h3 {
+		font-size: 5mm;
+	}
+	h1:first-child+p:first-letter {
+		float: left;
+		font-size: 18mm;
+		line-height: 14.5mm;
+		font-weight: bold;
+		font-family: "Copperplate", "Georgia", "EB Garamond", serif;
+		margin-right: 1mm;
+	}
+	a {
+		text-decoration: inherit;
+		color: inherit;
+	}
+	a:link {
+		text-decoration: none;
+		border-bottom: 0.3mm dotted black;
+	}
+	h1[id], h2[id], h3[id] {
+		cursor: pointer;
+	}
+	#toc {
+		padding-left: 10.5mm;
+		margin-bottom: 5mm;
+	}
+	#toc>li>ol {
+		padding-left: 6mm;
+		font-size: 4.5mm;
+		list-style-type: lower-alpha;
+	}
+	#toc>li>ol>li>ol {
+		padding-left: 4mm;
+		font-size: 3.8mm;
+		list-style-type: lower-greek;
+	}
+	#toc a:link {
+		display: block;
+		font-style: normal;
+		border-bottom: none;
+	}
+	q {
+		white-space: nowrap;
+		font-family: monospace;
+		background: gainsboro;
+	}
+	q:after, q:before {
+		content: none;
+	}
+	figure {
+		width: 100%;
+		margin: 5mm 0 10mm 0;
+		text-align: center;
+	}
+	figure img {
+		border: 0;
+		width: 100%;
+	}
+	figcaption {
+		margin: 2.5mm 10mm 0 10mm;
+		border-top: 0.3mm solid black;
+		padding-top: 2.5mm;
+		text-align: center;
+		font-style: oblique;
+	}
+	code {
+		display: block;
+		padding: 3mm 6mm 9mm 0mm;
+		background-color: #e2f0ef;
+		border-radius: 10mm;
+		margin: 1cm 3cm 1cm 1cm;
+		counter-reset: linenumbers;
+		border-bottom-right-radius: 50mm 30mm;
+		border-left: 7.4mm solid azure;
+		border-right: 0.8mm solid azure;
+		border-top: 3mm solid azure;
+		border-bottom: 3mm solid azure;
+	}
+	code>ol {
+		display: block;
+		font-family: "Monaco", "monofur", "Source Code Pro", "Lucida Console",
+			"Consolas", monospace;
+		font-size: 4mm;
+		margin: 0;
+		padding: 0;
+	}
+	code>ol>li {
+		padding: 0;
+		margin: 0;
+		counter-increment: linenumbers;
+		list-style-type: none;
+		white-space: pre-wrap;
+	}
+	code>ol>li:before {
+		background: #e2f0ef;
+		border-radius: 50%;
+		padding: 0.2mm 1.7mm;
+		color: aliceblue;
+		content: counter(linenumbers);
+		text-align: right;
+		line-height: 1;
+		position: relative;
+		left: -6mm;
+	}
+	ul {
+	}
+	ul>li {
+		margin-bottom: 4mm
+	}
+	header {
+		border-bottom: 0.3mm solid black;
+		margin-bottom: 5mm;
+		padding-bottom: 5mm;
+	}
+	header h1 {
+		margin-bottom: 0;
+	}
+	footer {
+		position: relative;
+		border-top: 0.3mm solid black;
+		width: 15cm;
+		margin-top: 10mm;
+		left: 10mm;
+		padding: 5mm 8mm;
+		text-align: right;
+		font-style: italic;
+	}
+	footer a:link {
+		text-decoration: none;
+		border-bottom: none;
+	}
+	.toc-gen {
+		list-style-type: none;
+		color: grey;
+		font-style: italic;
+	}
+</style>
+</head>
+<!-- !start! -->
+<body>
+<header>
+	<h1>Main title</h1>
+</header>
+<main>
+	<nav>
+		<h1>Table of Contents</h1>
+		<ol id="toc">
+			<li class="toc-gen">(Indexing, please wait...)</li>
+		</ol>
+	</nav>
+	<article>
+		<h1 id="first">First section</h1>
+		<p>This is a paragraph in the first section.  Here is a
+		<a href="#second">crosslink</a> to the second section.</p>
+		<p>This template
+		engine should provide nice-looking single-file HTML documentation that
+		works in any modern, standards-compliant browser.  Note: that excludes
+		even modern versions of IE if the page is served locally, but this
+		template is intended for <em>technical</em> content, for
+		<em>technical</em> people, so we don't really care if grannies, teenage
+		girls, and other IE users can't view it properly.</p>
+		<p>Here is a <q>quoted piece of text</q>.</p>
+		<h1 id="second">Second section</h1>
+		<p>This section contains some examples.</p>
+		<h2>Titles</h2>
+		<p>Titles created using the &lt;h1&gt;, &lt;h2&gt; and &lt;h3&gt; tags
+		are automatically indexed to create the table of contents at the
+		start of the document.  Clicking on an entry in the table of contents
+		will smooth-scroll you to the relevant section.  Likewise, clicking on a
+		title will smooth-scroll you to its entry in the table of contents.</p>
+		<h2>Ordered list</h2>
+		<ol>
+			<li id="li1">This is the first item</li>
+			<li id="li2">This is the first item</li>
+			<li id="li3">This is the first item</li>
+		</ol>
+		<h2>Unordered list</h2>
+		<p>And here is an unordered list of crosslinks to the list items:</p>
+		<ul>
+			<li><a href="#li3">Third item</a></li>
+			<li><a href="#li1">First item</a></li>
+			<li><a href="#li2">Second item</a></li>
+		</ul>
+		<h2>Code</h2>
+		Here is some code with automatic line numbering:
+		<code id="code">
+		<ol>
+		<li># Download stuff</li>
+		<li>git clone git@github.com/battlesnake/docpage</li>
+		<li>cd docpage</li>
+		<li></li>
+		<li># Edit stuff</li>
+		<li>vim index.html</li>
+		</ol>
+		</code>
+		<p>And here's a <a href="#code">crosslink</a> to the code.</p>
+		<h2>Images</h2>
+		<figure>
+			<img src="http://hackology.co.uk/wp-content/themes/hacktheme/images/home.jpg" alt="hackology.co.uk">
+			<figcaption>An image with caption (image: hackology.co.uk)</figcaption>
+		</figure>
+		<p>Images are best provided by use of the &lt;figure&gt; tag, with &lt;figcaption&gt; used for the caption.</p>
+	</article>
+</main>
+<footer>
+	<a href="http://hackology.co.uk">Mark K Cowan</a>
+</footer>
+</body>
+</html>

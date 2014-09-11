@@ -24,294 +24,36 @@
 <!-- advice for frontpage express.                -->
 <!--                                              -->
 <!-- -------------------------------------------- -->
+<!-- Begin SEO/social metadata (edit this as needed) -->
 <title>Documentation template</title>
-<meta id="author" content="Mark K Cowan, mark@battlesnake.co.uk">
-<meta id="generator" content="Ed, the true WYGIWYG editor">
-<meta id="i'm growing a watermelon plant" content="isn't this awesome?">
+<meta name="author" content="Mark K Cowan, mark@battlesnake.co.uk">
+<meta name="generator" content="Ed, the true WYGIWYG editor">
+<meta name="description" content="A cool print-friendly template for HTML-format documentation">
+<link rel="author" href="https://plus.google.com/102308390225359962273">
+<link rel="publisher" href="https://plus.google.com/116917388031849363184">
+<link rel="me" type="image/jpg" href="http://hackology.co.uk/icons/me.jpg">
+<meta property="og:title" content="Documentation template">
+<meta property="og:type" content="article">
+<meta property="og:image" content="http://hackology.co.uk/icons/redicon.png">
+<meta property="og:url" content="http://hackology.co.uk/docpage/">
+<meta property="og:description" content="A cool print-friendly template for HTML-format documentation">
+<meta property="og:locale" content="en_GB">
+<meta property="og:site_name" content="Hackology">
+<meta property="fb:admins" content="513889862">
+<link rel="shortcut icon" type="image/png" href="http://hackology.co.uk/icons/psygen.png">
+<link rel="shortcut icon" type="image/x-icon" href="http://hackology.co.uk/favicon.ico">
+<link rel="icon" type="image/png" href="http://hackology.co.uk/icons/psygen.png">
+<link rel="apple-touch-icon" type="image/png" href="http://hackology.co.uk/icons/redicon.png">
+<!-- End of SEO/social metadata -->
+<meta name="i'm growing a watermelon plant" content="isn't this awesome?">
+<meta name="it died" content=":(">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-<script>
-'use strict';
-	/* Generate table of contents from h1/h2/h3 tags */
-	var generate_toc = function () {
-		/* Table of contents */
-		var idx = 0, prev = 1, first = true, html = '';
-		$('article h1, article h2, article h3').each(function () {
-			var e = $(this);
-			var text = e.text();
-			var id = e.attr('id');
-			if (!id) {
-				id = 'toc-' + idx++;
-			}
-			e.attr('data-toc', 'yes');
-			var level = e.prop('tagName').substr(1);
-			e.attr('id', id);
-			if (level > prev) {
-				first = true;
-			}
-			if (!first) {
-				html += '</li>';
-			}
-			first = false;
-			for (; level < prev; prev--) {
-				html += '</ol>';
-				first = true;
-			}
-			if (level == prev + 1) {
-				html += '<ol>';
-				prev++;
-			} else if (level > prev) {
-				throw "Attempted to jump more than one header level";
-			}
-			html += '<li><a href="#' + id + '" id="li-' + id + '">' + text + '</a>';
-		});
-		if (!first) {
-			html += '</li>';
-		}
-		for (; prev > 1; prev--) {
-			html += '</ol>';
-		}
-		var toc = $('#toc');
-		toc.empty();
-		toc.append(html);
-	};
-	$(document).ready(function () {
-		var current = '';
-		/* Generate table of contents from h1/h2/h3 tags */
-		generate_toc();
-		/* Smooth scroll to sections */
-		var scrollToElem = function (target, glow, popping) {
-			if (target === '#' || target === '') {
-				target = '';
-				var top = 0, $target = '', glow = null;
-			} else {
-				var $target = $(target);
-				var glow = glow ? $(glow) : $target;
-				var top = $target.offset().top - 40;
-			}
-			/* Make target glow for a short while to make it easy to spot */
-			if (glow) {
-				var oldcolor = glow.css('color');
-				var oldbgcolor = glow.css('backgroundColor');
-				glow.css('color', 'blue');
-				glow.css('backgroundColor', 'gold');
-				glow.animate({ 'color': oldcolor, 'backgroundColor': oldbgcolor }, 1500);
-			}
-			/* Smooth scroll animation */
-			$('html, body').stop().animate(
-				{ scrollTop: top },
-				500, 'swing',
-				function () {
-					if (popping || location.hash === target) {
-						if (history.replaceState) {
-							history.replaceState(null, null, target);
-						}
-					} else {
-						if (history.pushState) {
-							history.pushState(null, null, target);
-						} else {
-							var id = $target.attr('id');
-							$target.attr('id', id + '-nojump');
-							location.hash = target;
-							$target.attr('id', id);
-						}
-					}
-				});
-		}
-		/* Set listener for history popstate */
-		$(window).on('popstate', function (e) {
-			scrollToElem(location.hash, null, true);
-		});
-		/* Smooth scrolling crossref/toc/title links */
-		$('a[href^="#"]').click(function (e) {
-			e.preventDefault();
-			scrollToElem(this.hash);
-		});
-		/* Smooth-scroll to TOC when clicking titles */
-		$('h1[id], h2[id], h3[id]').click(function (e) {
-			e.preventDefault();
-			var e = $(this);
-			var id = e.attr('id'), target;
-			if (e.attr('data-toc')) {
-				target = '#li-' + id;
-			}
-			scrollToElem('#toc', target);
-		});
-	});
-</script>
-<style>
-	@import url(http://fonts.googleapis.com/css?family=Droid+Sans|Lato:300,400|Source+Code+Pro:400,600|EB+Garamond);
-	@media screen and (min-device-width: 1200px) {
-		html {
-			/*
-			 * Chrome on Windows 7 shows jagged edges on the main fonts used
-			 * in this stylesheet.  This battery-murdering hack fixes that and
-			 * looks pretty nice in Firefox and IE too.
-			 */
-			/* text-shadow: rgba(0,0,0,1) 0 0 0.01mm; */
-		}
-	}
-	* {
-		box-sizing: border-box;
-	}
-	html {
-		background: gray;
-	}
-	body {
-		font-family: "Droid Sans", "Roboto", "Helvetica Neue";
-		font-weight: 400;
-		background: white;
-		max-width: 210mm;
-		/**/ width: 210mm; /**/
-		min-height: 297mm;
-		margin: 0 auto;
-		padding: 10mm 20mm 15mm 20mm;
-		line-height: 1.5;
-		font-size: 5mm;
-	}
-	h1 {
-		font-size: 9mm;
-	}
-	h2 {
-		font-size: 6.5mm;
-	}
-	h3 {
-		font-size: 5mm;
-	}
-	h1:first-child+p:first-letter {
-		float: left;
-		font-size: 18mm;
-		line-height: 14.5mm;
-		font-weight: bold;
-		font-family: "Copperplate", "Georgia", "EB Garamond", serif;
-		margin-right: 1mm;
-	}
-	a {
-		text-decoration: inherit;
-		color: inherit;
-	}
-	a:link {
-		text-decoration: none;
-		border-bottom: 0.3mm dotted black;
-	}
-	h1[id], h2[id], h3[id] {
-		cursor: pointer;
-	}
-	#toc {
-		padding-left: 10.5mm;
-		margin-bottom: 5mm;
-	}
-	#toc>li>ol {
-		padding-left: 6mm;
-		font-size: 4.5mm;
-		list-style-type: lower-alpha;
-	}
-	#toc>li>ol>li>ol {
-		padding-left: 4mm;
-		font-size: 3.8mm;
-		list-style-type: lower-greek;
-	}
-	#toc a:link {
-		display: block;
-		font-style: normal;
-		border-bottom: none;
-	}
-	q {
-		white-space: nowrap;
-		font-family: monospace;
-		background: gainsboro;
-	}
-	q:after, q:before {
-		content: none;
-	}
-	figure {
-		width: 100%;
-		margin: 5mm 0 10mm 0;
-		text-align: center;
-	}
-	figure img {
-		border: 0;
-		width: 100%;
-	}
-	figcaption {
-		margin: 2.5mm 10mm 0 10mm;
-		border-top: 0.3mm solid black;
-		padding-top: 2.5mm;
-		text-align: center;
-		font-style: oblique;
-	}
-	code {
-		display: block;
-		padding: 3mm 6mm 9mm 0mm;
-		background-color: #e2f0ef;
-		border-radius: 10mm;
-		margin: 1cm 3cm 1cm 1cm;
-		counter-reset: linenumbers;
-		border-bottom-right-radius: 50mm 30mm;
-		border-left: 7.4mm solid azure;
-		border-right: 0.8mm solid azure;
-		border-top: 3mm solid azure;
-		border-bottom: 3mm solid azure;
-	}
-	code>ol {
-		display: block;
-		font-family: "Monaco", "monofur", "Source Code Pro", "Lucida Console",
-			"Consolas", monospace;
-		font-size: 4mm;
-		margin: 0;
-		padding: 0;
-	}
-	code>ol>li {
-		padding: 0;
-		margin: 0;
-		counter-increment: linenumbers;
-		list-style-type: none;
-		white-space: pre-wrap;
-	}
-	code>ol>li:before {
-		background: #e2f0ef;
-		border-radius: 50%;
-		padding: 0.2mm 1.7mm;
-		color: aliceblue;
-		content: counter(linenumbers);
-		text-align: right;
-		line-height: 1;
-		position: relative;
-		left: -6mm;
-	}
-	ul {
-	}
-	ul>li {
-		margin-bottom: 4mm
-	}
-	header {
-		border-bottom: 0.3mm solid black;
-		margin-bottom: 5mm;
-		padding-bottom: 5mm;
-	}
-	header h1 {
-		margin-bottom: 0;
-	}
-	footer {
-		position: relative;
-		border-top: 0.3mm solid black;
-		width: 15cm;
-		margin-top: 10mm;
-		left: 10mm;
-		padding: 5mm 8mm;
-		text-align: right;
-		font-style: italic;
-	}
-	footer a:link {
-		text-decoration: none;
-		border-bottom: none;
-	}
-	.toc-gen {
-		list-style-type: none;
-		color: grey;
-		font-style: italic;
-	}
-</style>
+<script src="docpage.js"></script>
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans|Lato:300,400|Source+Code+Pro:400,600|EB+Garamond&subset=latin,latin-ext,cyrillic-ext,cyrillic">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="screen.css" media="screen">
+<link rel="stylesheet" type="text/css" href="print.css" media="print">
 </head>
 <!-- !start! -->
 <body>
@@ -327,8 +69,11 @@
 	</nav>
 	<article>
 		<h1 id="first">First section</h1>
-		<p>This is a paragraph in the first section.  Here is a
-		<a href="#second">crosslink</a> to the second section.</p>
+		<p>This is a paragraph in the first section.  The template is very
+		print-friendly, try a print-preview to see.  Each top-level section
+		starts a new page.  The template also supports cross-references, for
+		example, here is a <a href="#second">crosslink</a> to the second
+		section.</p>
 		<p>This template
 		engine should provide nice-looking single-file HTML documentation that
 		works in any modern, standards-compliant browser.  Note: that excludes

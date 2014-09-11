@@ -1,0 +1,48 @@
+html,body {
+	margin: 0;
+}
+
+p {
+	widows: 3;
+	orphans: 3;
+}
+
+h1,h2,h3 {
+	page-break-inside: avoid;
+	page-break-after: avoid;
+}
+
+article h1 {
+	page-break-before: always;
+	string-set: header content();
+}
+
+figure {
+	page-break-before: avoid;
+	page-break-inside: avoid;
+}
+
+code * {
+	widows: 3;
+	orphans: 5;
+}
+
+code li {
+	page-break-after: avoid;
+}
+
+article a[href^="#"]:after {
+	content: "p" target-counter(attr(href), page);
+	vertical-align: super;
+	font-size: 35%;
+}
+
+article a:not([href^="#"]):link:after, 
+article a:not([href^="#"]):visited:after {
+	content: " (" attr(href) ") "; 
+	font-size: 90%; 
+}
+
+#toc a:link:after {
+	content: leader('.') target-counter(attr(href), page);
+}

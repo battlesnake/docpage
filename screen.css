@@ -1,0 +1,18 @@
+html {
+	/*
+	 * Chrome on Windows 7 shows jagged edges on the main fonts used
+	 * in this stylesheet.  This battery-murdering hack fixes that and
+	 * looks pretty nice in Firefox and IE too.
+	 */
+	/* text-shadow: rgba(0,0,0,1) 0 0 0.01mm; */
+	background: gray;
+}
+
+body {
+	max-width: 210mm;
+	width: 210mm;
+	min-height: 297mm;
+	margin: 0 auto;
+	padding: 15mm 20mm 15mm 20mm;
+}
+
